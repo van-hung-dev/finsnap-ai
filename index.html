@@ -67,6 +67,7 @@
                             <button class="quick-ticker px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300 transition-colors">VNM</button>
                             <button class="quick-ticker px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300 transition-colors">VCB</button>
                             <button class="quick-ticker px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300 transition-colors">DBC</button>
+                            <button class="quick-ticker px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300 transition-colors">HAG</button>
                         </div>
                     </div>
 
@@ -188,7 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const tickerInput = document.getElementById('tickerInput');
     const backBtn = document.getElementById('backBtn');
 
-    // Check null trước khi addEventListener
     if (analyzeBtn) {
         analyzeBtn.addEventListener('click', () => {
             const ticker = tickerInput.value.trim().toUpperCase();
