@@ -128,133 +128,43 @@
         </section>
 
         <!-- MÀN 3: RESULTS -->
-        <section id="resultsScreen" class="hidden">
-            <div class="mb-6">
-                <button id="backBtn" class="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors">
-                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                    <span class="text-sm font-medium">Phân tích mã khác</span>
-                </button>
+      <div id="results" class="space-y-6 hidden">
+    <!-- 1. SCORE -->
+    <div class="glass-card rounded-2xl p-6 text-center">
+        <p class="text-sm text-slate-500 mb-2">Điểm sức khỏe tài chính</p>
+        <div class="relative w-32 h-32 mx-auto">
+            <svg class="w-full h-full" viewBox="0 0 36 36">
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none" stroke="#e5e7eb" stroke-width="3" />
+                <path id="scoreCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="0, 100" />
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <span id="scoreValue" class="text-4xl font-bold">0</span>
             </div>
+        </div>
+        <p id="scoreLabel" class="text-sm font-semibold mt-2"></p>
+    </div>
 
-            <div class="glass-card rounded-2xl p-6 mb-6">
-                <div class="flex items-start justify-between flex-wrap gap-4">
-                    <div>
-                        <div class="flex items-center gap-3 mb-2">
-                            <h2 class="text-2xl md:text-3xl font-bold" id="resultTicker">FPT Corporation</h2>
-                            <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-lg text-sm font-semibold" id="resultQuarter">Q2/2024</span>
-                        </div>
-                        <p class="text-slate-400 text-sm" id="resultIndustry">Ngành: Công nghệ thông tin | HOSE</p>
-                    </div>
-                </div>
-            </div>
+    <!-- 2. TÓM TẮT NHANH -->
+    <div class="glass-card rounded-2xl p-6">
+        <h3 class="font-bold mb-4">Tóm tắt nhanh</h3>
+        <div id="summaryGrid" class="grid grid-cols-2 gap-3 text-sm"></div>
+    </div>
 
-            <div class="grid lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-1">
-                    <div class="glass-card rounded-2xl p-8 text-center sticky top-6">
-                        <h3 class="text-lg font-semibold mb-6 text-slate-300">FinSnap Score</h3>
-                        <div class="relative w-48 h-48 mx-auto mb-6">
-                            <svg class="w-full h-full" viewBox="0 0 200 200">
-                                <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="12"/>
-                                <circle id="scoreCircle" cx="100" cy="100" r="85" fill="none" stroke="url(#scoreGradient)" stroke-width="12" stroke-linecap="round" stroke-dasharray="534.07" stroke-dashoffset="534.07" class="score-ring"/>
-                                <defs>
-                                    <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#10b981"/>
-                                        <stop offset="100%" stop-color="#06b6d4"/>
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                <span id="scoreValue" class="text-6xl font-extrabold">0</span>
-                                <span class="text-sm text-slate-400 mt-1">/100</span>
-                            </div>
-                        </div>
-                        <div id="scoreBadge" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold mb-4"></div>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-2 space-y-6">
-                    <!-- Key Metrics -->
-                    <div>
-                        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
-                            <i data-lucide="bar-chart-3" class="w-5 h-5 text-emerald-400"></i>
-                            3 Chỉ số then chốt
-                        </h3>
-                        <div class="grid md:grid-cols-3 gap-4">
-                            <div class="glass-card rounded-xl p-5 fade-in-up">
-                                <div class="flex items-start justify-between mb-3">
-                                    <div class="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center">
-                                        <i data-lucide="trending-up" class="w-5 h-5 text-emerald-400"></i>
-                                    </div>
-                                    <span id="revenueGrowth" class="flex items-center gap-1 text-emerald-400 text-sm font-semibold"></span>
-                                </div>
-                                <p class="text-xs text-slate-500 mb-1">Tăng trưởng doanh thu</p>
-                                <p id="revenueValue" class="text-2xl font-bold"></p>
-                                <p class="text-xs text-slate-600 mt-2">YoY</p>
-                            </div>
-
-                            <div class="glass-card rounded-xl p-5 fade-in-up" style="animation-delay: 0.1s">
-                                <div class="flex items-start justify-between mb-3">
-                                    <div class="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
-                                        <i data-lucide="percent" class="w-5 h-5 text-cyan-400"></i>
-                                    </div>
-                                    <span id="roeChange" class="flex items-center gap-1 text-emerald-400 text-sm font-semibold"></span>
-                                </div>
-                                <p class="text-xs text-slate-500 mb-1">ROE</p>
-                                <p id="roeValue" class="text-2xl font-bold"></p>
-                                <p class="text-xs text-slate-600 mt-2">Hiệu quả vốn</p>
-                            </div>
-
-                            <div class="glass-card rounded-xl p-5 fade-in-up" style="animation-delay: 0.2s">
-                                <div class="flex items-start justify-between mb-3">
-                                    <div class="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center">
-                                        <i data-lucide="wallet" class="w-5 h-5 text-amber-400"></i>
-                                    </div>
-                                    <span id="debtStatus" class="flex items-center gap-1 text-emerald-400 text-sm font-semibold"></span>
-                                </div>
-                                <p class="text-xs text-slate-500 mb-1">Hệ số nợ/VCSH</p>
-                                <p id="debtValue" class="text-2xl font-bold"></p>
-                                <p class="text-xs text-slate-600 mt-2">An toàn tài chính</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- AI Explanation -->
-                    <div class="glass-card rounded-2xl p-6 fade-in-up" style="animation-delay: 0.3s">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-xl flex items-center justify-center">
-                                <i data-lucide="sparkles" class="w-5 h-5 text-slate-900"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-semibold">AI diễn giải cho bạn</h3>
-                                <p class="text-xs text-slate-500">Nói tiếng người, không thuật ngữ</p>
-                            </div>
-                        <div class="bg-slate-900/50 rounded-xl p-5 border border-slate-800">
-                            <p id="aiExplanationText" class="text-slate-300 leading-relaxed"></p>
-                        </div>
-                    </div>
-
-                    <!-- Red Flags -->
-                    <div id="redFlagBox" class="hidden bg-red-500/10 border border-red-500/30 rounded-2xl p-6 fade-in-up" style="animation-delay: 0.4s">
-                        <div class="flex items-start gap-4">
-                            <div class="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <i data-lucide="alert-circle" class="w-5 h-5 text-red-400"></i>
-                            </div>
-                            <div class="flex-1">
-                                <h3 class="text-lg font-semibold text-red-400 mb-2">⚠️ Red Flag cần lưu ý</h3>
-                                <p id="redFlagText" class="text-slate-300 text-sm leading-relaxed"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!-- 3. AI NHẬN ĐỊNH -->
+    <div class="glass-card rounded-2xl p-6">
+        <h3 class="font-bold mb-4">AI Phân tích</h3>
+        <div id="aiExplanation" class="text-slate-700 leading-relaxed whitespace-pre-line"></div>
+    </div>
+</div>
     </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
 
-    const API_URL = 'https://finsnap-ai.vanhung282003.workers.dev/'; // ĐỔI LINK WORKER CỦA BẠN
+    const API_URL = 'https://finsnap-ai.nh607356.workers.dev/'; // ĐỔI LINK WORKER CỦA BẠN
 
     const landingScreen = document.getElementById('landingScreen');
     const loadingScreen = document.getElementById('loadingScreen');
