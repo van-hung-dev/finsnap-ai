@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FinSnap - AI Phân Tích Báo Cáo Tài Chính</title>
+<title>FinSnap - AI Phân Tích BCTC</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
@@ -11,7 +11,6 @@
     body { font-family: 'Inter', sans-serif; }
    .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%); }
    .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-   .score-ring { transform: rotate(-90deg); transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1); }
    .hidden { display: none!important; }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
    .fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
@@ -35,6 +34,9 @@
                     <p class="text-xs text-slate-400 -mt-1">AI đọc BCTC cho GenZ</p>
                 </div>
             </div>
+            <button id="backBtn" class="hidden text-slate-400 hover:text-white transition-colors">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </button>
         </header>
 
         <!-- MÀN 1: LANDING -->
@@ -45,7 +47,7 @@
                     <span class="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">như dân chuyên trong 30s</span>
                 </h2>
                 <p class="text-slate-400 text-base md:text-lg max-w-2xl mx-auto">
-                    Nhập mã cổ phiếu. AI tự động lấy BCTC mới nhất & tóm tắt chỉ số quan trọng cho bạn.
+                    Nhập mã cổ phiếu. AI tóm tắt 3 câu hỏi: Làm ăn tốt không? Rủi ro gì? Có nên theo dõi?
                 </p>
             </div>
 
@@ -64,6 +66,7 @@
                             <button class="quick-ticker px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300 transition-colors">HPG</button>
                             <button class="quick-ticker px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300 transition-colors">VNM</button>
                             <button class="quick-ticker px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300 transition-colors">VCB</button>
+                            <button class="quick-ticker px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300 transition-colors">DBC</button>
                         </div>
                     </div>
 
@@ -91,7 +94,7 @@
                         </div>
                         <div class="flex-1 text-left">
                             <p class="font-semibold">Lấy dữ liệu BCTC</p>
-                            <p class="text-xs text-slate-500">Từ Cafef/Vietstock</p>
+                            <p class="text-xs text-slate-500">Q2/2024</p>
                         </div>
                         <div class="loading-check hidden"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i></div>
                     </div>
@@ -102,7 +105,7 @@
                         </div>
                         <div class="flex-1 text-left">
                             <p class="font-semibold">Tính toán chỉ số</p>
-                            <p class="text-xs text-slate-500">ROE, Nợ/VCSH, Score</p>
+                            <p class="text-xs text-slate-500">Score, Rủi ro</p>
                         </div>
                         <div class="loading-check hidden"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i></div>
                     </div>
@@ -113,7 +116,7 @@
                         </div>
                         <div class="flex-1 text-left">
                             <p class="font-semibold">AI diễn giải</p>
-                            <p class="text-xs text-slate-500">Tóm tắt key insights GenZ</p>
+                            <p class="text-xs text-slate-500">Tóm tắt key insights</p>
                         </div>
                         <div class="loading-check hidden"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i></div>
                     </div>
@@ -128,36 +131,49 @@
         </section>
 
         <!-- MÀN 3: RESULTS -->
-      <div id="results" class="space-y-6 hidden">
-    <!-- 1. SCORE -->
-    <div class="glass-card rounded-2xl p-6 text-center">
-        <p class="text-sm text-slate-500 mb-2">Điểm sức khỏe tài chính</p>
-        <div class="relative w-32 h-32 mx-auto">
-            <svg class="w-full h-full" viewBox="0 0 36 36">
-                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none" stroke="#e5e7eb" stroke-width="3" />
-                <path id="scoreCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="0, 100" />
-            </svg>
-            <div class="absolute inset-0 flex items-center justify-center">
-                <span id="scoreValue" class="text-4xl font-bold">0</span>
+        <section id="resultsScreen" class="hidden space-y-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 id="resultTitle" class="text-2xl md:text-3xl font-bold">FPT Corporation</h2>
+                    <p id="resultSubtitle" class="text-slate-400 text-sm">Q2/2024</p>
+                </div>
             </div>
-        </div>
-        <p id="scoreLabel" class="text-sm font-semibold mt-2"></p>
-    </div>
 
-    <!-- 2. TÓM TẮT NHANH -->
-    <div class="glass-card rounded-2xl p-6">
-        <h3 class="font-bold mb-4">Tóm tắt nhanh</h3>
-        <div id="summaryGrid" class="grid grid-cols-2 gap-3 text-sm"></div>
-    </div>
+            <!-- 1. SCORE -->
+            <div class="glass-card rounded-2xl p-6 text-center">
+                <p class="text-sm text-slate-500 mb-2">Điểm sức khỏe tài chính</p>
+                <div class="relative w-32 h-32 mx-auto">
+                    <svg class="w-full h-full" viewBox="0 0 36 36">
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none" stroke="#334155" stroke-width="3" />
+                        <path id="scoreCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="0, 100" style="transition: stroke-dasharray 1s ease-out;" />
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span id="scoreValue" class="text-4xl font-bold">0</span>
+                    </div>
+                </div>
+                <p id="scoreLabel" class="text-sm font-semibold mt-2"></p>
+            </div>
 
-    <!-- 3. AI NHẬN ĐỊNH -->
-    <div class="glass-card rounded-2xl p-6">
-        <h3 class="font-bold mb-4">AI Phân tích</h3>
-        <div id="aiExplanation" class="text-slate-700 leading-relaxed whitespace-pre-line"></div>
-    </div>
-</div>
+            <!-- 2. TÓM TẮT NHANH -->
+            <div class="glass-card rounded-2xl p-6">
+                <h3 class="font-bold mb-4 flex items-center gap-2">
+                    <i data-lucide="list-checks" class="w-5 h-5 text-emerald-400"></i>
+                    Tóm tắt nhanh
+                </h3>
+                <div id="summaryGrid" class="grid grid-cols-2 gap-3 text-sm"></div>
+            </div>
+
+            <!-- 3. AI NHẬN ĐỊNH -->
+            <div class="glass-card rounded-2xl p-6">
+                <h3 class="font-bold mb-4 flex items-center gap-2">
+                    <i data-lucide="brain-circuit" class="w-5 h-5 text-emerald-400"></i>
+                    AI Phân tích
+                </h3>
+                <div id="aiExplanation" class="text-slate-300 leading-relaxed whitespace-pre-line"></div>
+            </div>
+        </section>
     </div>
 
 <script>
@@ -183,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
     backBtn.addEventListener('click', () => {
         resultsScreen.classList.add('hidden');
         landingScreen.classList.remove('hidden');
+        backBtn.classList.add('hidden');
         tickerInput.value = '';
     });
 
@@ -200,13 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function resetSteps() {
         ['step1','step2','step3'].forEach(id => {
             const step = document.getElementById(id);
-            if (!step) return;
             step.classList.add('opacity-50');
             step.classList.remove('opacity-100');
-            const check = step.querySelector('.loading-check');
-            const icon = step.querySelector('.step-icon');
-            if (check) check.classList.add('hidden');
-            if (icon) icon.classList.remove('bg-emerald-500/20');
+            step.querySelector('.loading-check').classList.add('hidden');
+            step.querySelector('.step-icon').classList.remove('bg-emerald-500/20');
         });
     }
 
@@ -214,13 +228,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ['step1','step2','step3'].forEach((stepId, index) => {
             setTimeout(() => {
                 const step = document.getElementById(stepId);
-                if (!step) return;
                 step.classList.remove('opacity-50');
                 step.classList.add('opacity-100');
-                const icon = step.querySelector('.step-icon');
-                const check = step.querySelector('.loading-check');
-                if (icon) icon.classList.add('bg-emerald-500/20');
-                if (check) check.classList.remove('hidden');
+                step.querySelector('.step-icon').classList.add('bg-emerald-500/20');
+                step.querySelector('.loading-check').classList.remove('hidden');
             }, (index + 1) * 800);
         });
     }
@@ -229,6 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
         landingScreen.classList.add('hidden');
         resultsScreen.classList.add('hidden');
         loadingScreen.classList.remove('hidden');
+        backBtn.classList.add('hidden');
         document.getElementById('loadingTicker').innerText = `Mã: ${ticker}`;
         resetSteps();
         animateLoadingSteps();
@@ -246,11 +258,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             const data = await response.json();
-            updateResultsUI(data.raw_data, data.explanation);
+            updateResultsUI(data);
 
             setTimeout(() => {
                 loadingScreen.classList.add('hidden');
                 resultsScreen.classList.remove('hidden');
+                backBtn.classList.remove('hidden');
             }, 500);
         } catch (error) {
             alert('Lỗi: ' + error.message);
@@ -259,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-   function updateResultsUI(data) {
+ function updateResultsUI(data) {
     // Header
     document.getElementById('resultTitle').innerText = `${data.ticker} Corporation`;
     document.getElementById('resultSubtitle').innerText = data.quarter || 'Q gần nhất';
