@@ -5,7 +5,9 @@ const BCTC_DB = {
   "VCB": { revenue: 18500, revenue_prev: 16480, net_profit: 7500, profit_prev: 6800, profit_margin: 40.5, roe: 21.3, debt_ratio: 0.15, ocf: 9000, pe: 14.2, pb: 2.9 },
   "VIC": { revenue: 42800, revenue_prev: 31650, net_profit: 2100, profit_prev: 1850, profit_margin: 4.9, roe: 4.2, debt_ratio: 0.95, ocf: -3500, pe: 45.2, pb: 1.8 },
   "DBC": { revenue: 3200, revenue_prev: 3375, net_profit: 150, profit_prev: 180, profit_margin: 4.7, roe: 12.5, debt_ratio: 0.88, ocf: -50, pe: 15.2, pb: 1.1 },
-  "HAG": { revenue: 1200, revenue_prev: 1371, net_profit: -80, profit_prev: -50, profit_margin: -6.7, roe: -5.2, debt_ratio: 2.15, ocf: -200, pe: 0, pb: 0.8 }
+  "HAG": { revenue: 1200, revenue_prev: 1371, net_profit: -80, profit_prev: -50, profit_margin: -6.7, roe: -5.2, debt_ratio: 2.15, ocf: -200, pe: 0, pb: 0.8 },
+  "TCB": { revenue: 12800, revenue_prev: 11500, net_profit: 5200, profit_prev: 4800, profit_margin: 40.6, roe: 19.8, debt_ratio: 0.18, ocf: 6100, pe: 6.5, pb: 1.2 },
+  "MBB": { revenue: 11200, revenue_prev: 9800, net_profit: 4800, profit_prev: 4200, profit_margin: 42.9, roe: 22.1, debt_ratio: 0.22, ocf: 5500, pe: 5.8, pb: 1.3 }
 };
 
 export default {
@@ -44,6 +46,10 @@ export default {
   },
 };
 
+function formatNumber(num) {
+  return num.toLocaleString('vi-VN');
+}
+
 function runRuleBasedAnalysis(ticker, d) {
   let score = 50;
   const flags = [];
@@ -56,29 +62,30 @@ function runRuleBasedAnalysis(ticker, d) {
   // 1. TĂNG TRƯỞNG - 30 điểm
   if (rev_growth > 15) {
     score += 15;
-    summary.revenue = `Tăng ${rev_growth.toFixed(1)}% lên ${d.revenue.toLocaleString('vi-VN')} tỷ`;
+    summary.revenue = `Tăng ${rev_growth.toFixed(1)}% lên ${formatNumber(d.revenue)} tỷ`;
   } else if (rev_growth > 0) {
     score += 8;
-    summary.revenue = `Tăng ${rev_growth.toFixed(1)}% lên ${d.revenue.toLocaleString('vi-VN')} tỷ`;
+    summary.revenue = `Tăng ${rev_growth.toFixed(1)}% lên ${formatNumber(d.revenue)} tỷ`;
   } else {
     score -= 10;
-    summary.revenue = `Giảm ${Math.abs(rev_growth).toFixed(1)}% còn ${d.revenue.toLocaleString('vi-VN')} tỷ`;
+    summary.revenue = `Giảm ${Math.abs(rev_growth).toFixed(1)}% còn ${formatNumber(d.revenue)} tỷ`;
     flags.push('Doanh thu suy giảm');
   }
 
   if (d.net_profit > 0) {
     score += 10;
-    summary.profit = `Lãi ${d.net_profit.toLocaleString('vi-VN')} tỷ (${profit_growth > 0? '+':''}${profit_growth.toFixed(1)}%)`;
+    const sign = profit_growth >= 0? '+' : '';
+    summary.profit = `Lãi ${formatNumber(d.net_profit)} tỷ (${sign}${profit_growth.toFixed(1)}%)`;
   } else {
     score -= 20;
-    summary.profit = `Lỗ ${Math.abs(d.net_profit).toLocaleString('vi-VN')} tỷ`;
+    summary.profit = `Lỗ ${formatNumber(Math.abs(d.net_profit))} tỷ`;
     flags.push('Lỗ sau thuế');
   }
 
   // 2. HIỆU QUẢ - 25 điểm
   if (d.profit_margin > 15) { score += 10; }
   else if (d.profit_margin > 5) { score += 5; }
-  else { score -= 5; flags.push('Biên lợi nhuận mỏng chỉ ' + d.profit_margin.toFixed(1) + '%'); }
+  else { score -= 5; flags.push(`Biên lợi nhuận mỏng chỉ ${d.profit_margin.toFixed(1)}%`); }
 
   if (d.roe > 20) {
     score += 10;
@@ -98,7 +105,7 @@ function runRuleBasedAnalysis(ticker, d) {
   if (d.debt_ratio > 1.0) {
     score -= 15;
     summary.debt = `Rất cao ${d.debt_ratio.toFixed(2)} lần`;
-    flags.push('Nợ vay rất cao gấp ' + d.debt_ratio.toFixed(1) + ' lần VCSH');
+    flags.push(`Nợ vay rất cao gấp ${d.debt_ratio.toFixed(1)} lần VCSH`);
   } else if (d.debt_ratio > 0.6) {
     score -= 8;
     summary.debt = `Cao ${d.debt_ratio.toFixed(2)} lần`;
@@ -109,21 +116,21 @@ function runRuleBasedAnalysis(ticker, d) {
 
   if (d.ocf < 0 && d.net_profit > 0) {
     score -= 15;
-    summary.cashflow = `Yếu, âm ${Math.abs(d.ocf).toLocaleString('vi-VN')} tỷ`;
-    flags.push('Lợi nhuận ảo - dòng tiền HĐKD âm ' + Math.abs(d.ocf).toLocaleString('vi-VN') + ' tỷ');
+    summary.cashflow = `Yếu, âm ${formatNumber(Math.abs(d.ocf))} tỷ`;
+    flags.push(`Lợi nhuận ảo - dòng tiền HĐKD âm ${formatNumber(Math.abs(d.ocf))} tỷ`);
   } else if (d.ocf < 0) {
     score -= 10;
-    summary.cashflow = `Âm ${Math.abs(d.ocf).toLocaleString('vi-VN')} tỷ`;
+    summary.cashflow = `Âm ${formatNumber(Math.abs(d.ocf))} tỷ`;
     flags.push('Dòng tiền âm');
   } else {
-    summary.cashflow = `Khỏe ${d.ocf.toLocaleString('vi-VN')} tỷ`;
+    summary.cashflow = `Khỏe ${formatNumber(d.ocf)} tỷ`;
   }
 
   // 4. ĐỊNH GIÁ - 20 điểm
   if (d.pe > 30 && d.pe!== 0) {
     score -= 10;
     summary.valuation = `Đắt P/E ${d.pe.toFixed(1)}`;
-    flags.push('P/E cao ' + d.pe.toFixed(1) + ', định giá đắt');
+    flags.push(`P/E cao ${d.pe.toFixed(1)}, định giá đắt`);
   } else if (d.pe < 10 && d.pe > 0) {
     score += 5;
     summary.valuation = `Rẻ P/E ${d.pe.toFixed(1)}`;
@@ -140,6 +147,7 @@ function runRuleBasedAnalysis(ticker, d) {
 
   return {
     ticker: ticker.toUpperCase(),
+    quarter: 'Q2/2024',
     score,
     summary,
     flags,
@@ -153,18 +161,18 @@ async function generateAIExplanation(analysis, apiKey) {
 
 - Score: ${analysis.score}/100
 - Tóm tắt:
-    * ${analysis.summary.revenue}
-    * ${analysis.summary.profit}
-    * ${analysis.summary.debt}
-    * ${analysis.summary.cashflow}
+    * Doanh thu: ${analysis.summary.revenue}
+    * Lợi nhuận: ${analysis.summary.profit}
+    * Nợ/VCSH: ${analysis.summary.debt}
+    * Dòng tiền: ${analysis.summary.cashflow}
     * ROE: ${analysis.summary.roe}
-    * ${analysis.summary.valuation}
+    * Định giá: ${analysis.summary.valuation}
 - Cảnh báo: ${analysis.flags.join(', ') || 'Không có'}
 
 Viết 4 phần, giọng GenZ dễ hiểu, dùng emoji, KHÔNG dùng dấu --:
 
-1. Nhận định chính: 1-2 câu về tình hình làm ăn, dùng số liệu cụ thể
-2. Cảnh báo rủi ro: Nêu rõ rủi ro từ flags với số liệu, nếu không có thì nói "Chưa thấy rủi ro lớn"
+1. Nhận định chính: 1-2 câu về tình hình làm ăn, dùng SỐ LIỆU CỤ THỂ đã cho
+2. Cảnh báo rủi ro: Nêu rõ rủi ro từ flags với SỐ LIỆU, nếu không có thì nói "Chưa thấy rủi ro lớn"
 3. Kết luận chuyên gia: Dùng đúng câu "${analysis.verdict}"
 4. Lưu ý: "Đây không phải khuyến nghị mua/bán"
 
