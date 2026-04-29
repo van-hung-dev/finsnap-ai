@@ -259,42 +259,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateResultsUI(data, aiText) {
-        document.getElementById('resultTicker').innerText = `${data.ticker} Corporation`;
-        document.getElementById('resultQuarter').innerText = data.quarter || 'Q gần nhất';
-        
-        const score = data.score || 0;
-        document.getElementById('scoreValue').innerText = score;
-        document.getElementById('scoreCircle').style.strokeDashoffset = 534.07 - (534.07 * score / 100);
+   function updateResultsUI(data) {
+    // Header
+    document.getElementById('resultTitle').innerText = `${data.ticker} Corporation`;
+    document.getElementById('resultSubtitle').innerText = data.quarter || 'Q gần nhất';
 
-        const scoreBadge = document.getElementById('scoreBadge');
-        if (score >= 70) {
-            scoreBadge.className = 'inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-emerald-500/20 text-emerald-400';
-            scoreBadge.innerHTML = '<i data-lucide="shield-check" class="w-4 h-4"></i> Khỏe mạnh';
-        } else if (score >= 50) {
-            scoreBadge.className = 'inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-amber-500/20 text-amber-400';
-            scoreBadge.innerHTML = '<i data-lucide="shield-alert" class="w-4 h-4"></i> Trung bình';
-        } else {
-            scoreBadge.className = 'inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-red-500/20 text-red-400';
-            scoreBadge.innerHTML = '<i data-lucide="shield-x" class="w-4 h-4"></i> Rủi ro';
-        }
+    // 1. Score
+    const score = data.score || 0;
+    document.getElementById('scoreValue').innerText = score;
+    const circle = document.getElementById('scoreCircle');
+    circle.style.strokeDasharray = `${score}, 100`;
 
-        document.getElementById('revenueValue').innerText = `${data.revenue?.toFixed(1) || 0} tỷ`;
-        document.getElementById('roeValue').innerText = `${data.roe || 0}%`;
-        document.getElementById('debtValue').innerText = `${data.debt_ratio?.toFixed(2) || 0}`;
+    let color = '#ef4444', label = 'Rủi ro cao';
+    if (score >= 80) { color = '#10b981'; label = 'Rất tốt'; }
+    else if (score >= 60) { color = '#f59e0b'; label = 'Cần theo dõi'; }
+    circle.style.stroke = color;
+    document.getElementById('scoreLabel').innerText = label;
+    document.getElementById('scoreLabel').style.color = color;
 
-        document.getElementById('aiExplanationText').innerText = aiText;
+    // 2. Tóm tắt nhanh - GIỜ CÓ SỐ CỤ THỂ
+    const s = data.summary;
+    document.getElementById('summaryGrid').innerHTML = `
+        <div class="col-span-2"><span class="text-slate-500">Doanh thu:</span> <b class="text-white">${s.revenue}</b></div>
+        <div class="col-span-2"><span class="text-slate-500">Lợi nhuận:</span> <b class="text-white">${s.profit}</b></div>
+        <div><span class="text-slate-500">Nợ/VCSH:</span> <b class="text-white">${s.debt}</b></div>
+        <div><span class="text-slate-500">Dòng tiền:</span> <b class="text-white">${s.cashflow}</b></div>
+        <div><span class="text-slate-500">ROE:</span> <b class="text-white">${s.roe}</b></div>
+        <div><span class="text-slate-500">Định giá:</span> <b class="text-white">${s.valuation}</b></div>
+    `;
 
-        // Red flags
-        if (data.flags && data.flags.length > 0) {
-            document.getElementById('redFlagBox').classList.remove('hidden');
-            document.getElementById('redFlagText').innerText = data.flags.join('. ');
-        } else {
-            document.getElementById('redFlagBox').classList.add('hidden');
-        }
+    // 3. AI
+    document.getElementById('aiExplanation').innerText = data.explanation;
 
-        lucide.createIcons();
-    }
+    lucide.createIcons();
+}
 });
 </script>
 </body>
